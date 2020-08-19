@@ -1,5 +1,7 @@
 import scrapy
-from django.shortcuts import render, redirect
+import random
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from scrapy.crawler import CrawlerRunner
 from twisted.internet import reactor
 import json
@@ -11,6 +13,7 @@ class BingSpider(scrapy.Spider):
 
     def start_requests(self):
         print(self.keyword)
+        print(self.ob_id)
         urls = [
             'https://api.cognitive.microsoft.com/bing/v7.0/search?q={}'.format(self.keyword),
         ]
@@ -39,22 +42,29 @@ class BingSpider(scrapy.Spider):
         bing_search.videos = data.get('videos', 'None')
         bing_search.save()
 
+@csrf_exempt
 def bing_scraper(request):
-    if request.method == 'POST':
+    keyword = request.GET.get('keyword', False)
+
+    if keyword:
         try:
+
+            n = random.randint(0, 999)
             runner = CrawlerRunner()
-            d = runner.crawl(BingSpider, keyword=request.POST.get('keyword', ''))
+            d = runner.crawl(BingSpider, keyword=keyword, ob_id=n)
             d.addBoth(lambda _: reactor.stop())
             reactor.run()
+
+            bing_search = BingSearch.scan(rate_limit=15)
+
+            list = []
+            for data in bing_search:
+                list.append(data.convert())
+
+            json_data = json.dumps(list)
+            return JsonResponse({'error': False, 'data': json_data})
+
         except Exception as e:
-            print(e)
-        return redirect('/')
-
+            return JsonResponse({'error': True, 'message': str(e)})
     else:
-        bing_search = BingSearch.scan(rate_limit=15)
-
-        context = {
-            'bing_search' : bing_search
-        }
-
-        return render(request, 'scraper.html', context)
+        return JsonResponse({'error': False, 'message': 'Keyword param is missing.'})

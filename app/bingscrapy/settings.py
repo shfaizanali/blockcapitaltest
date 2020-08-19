@@ -81,12 +81,12 @@ WSGI_APPLICATION = 'bingscrapy.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
 
 # Password validation
@@ -128,5 +128,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
-AWS_ACCESS_KEY_ID = 'AKIAYPWGYNABTIGRFWYI'
-AWS_SECRET_ACCESS_KEY = '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'
+AWS_ACCESS_KEY_ID = ''
+AWS_SECRET_ACCESS_KEY = ''

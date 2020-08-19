@@ -44,7 +44,7 @@ class BingSpider(scrapy.Spider):
 
 @csrf_exempt
 def bing_scraper(request):
-    keyword = request.GET.get('keyword', False)
+    keyword = request.GET.get('q', False)
 
     if keyword:
         try:
@@ -67,4 +67,4 @@ def bing_scraper(request):
         except Exception as e:
             return JsonResponse({'error': True, 'message': str(e)})
     else:
-        return JsonResponse({'error': False, 'message': 'Keyword param is missing.'})
+        return JsonResponse({'error': False, 'message': 'q param is missing.'})
